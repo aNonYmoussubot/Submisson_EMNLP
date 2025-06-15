@@ -1,0 +1,63 @@
+# Model arguments
+model_name_or_path: /root/autodl-tmp/models/Qwen2.5-14B-Instruct
+model_revision: main
+torch_dtype: bfloat16
+attn_implementation: flash_attention_2
+
+# Data training arguments
+# dataset_name: /root/autodl-tmp/datasets/OpenR1-Math-220k
+dataset_name: /xxx/datasets/Table-Reasoning-data_2
+dataset_num_proc: 8
+
+# SFT trainer config
+bf16: true
+do_eval: false
+eval_strategy: 'no'
+gradient_accumulation_steps: 8
+gradient_checkpointing: true
+gradient_checkpointing_kwargs:
+  use_reentrant: false
+hub_model_id: Qwen2.5-14B-Open-R1-Distill
+hub_strategy: every_save
+learning_rate: 3.0e-05
+log_level: info
+logging_steps: 5
+logging_strategy: steps
+lr_scheduler_type: cosine_with_min_lr
+lr_scheduler_kwargs:
+  min_lr_rate: 0.1
+packing: false
+max_length: 8192
+max_steps: -1
+num_train_epochs: 2
+output_dir: data/Qwen2.5-14B-Open-R1-Distill-Peft
+overwrite_output_dir: true
+per_device_eval_batch_size: 16
+per_device_train_batch_size: 2
+push_to_hub: false
+report_to:
+- wandb
+save_strategy: "steps"
+save_steps: 1000
+save_total_limit: 3
+seed: 42
+use_liger_kernel: true
+warmup_ratio: 0.05
+# ========== PEFT 专项配置 ==========
+# PEFT 配置
+use_peft: true
+peft_type: "lora"  # 可选项: lora, prefix, prompt, p_tuning 等，与你的 get_peft_config 支持的类型一致
+r: 16
+lora_alpha: 32
+lora_dropout: 0.05
+lora_target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj
+  - gate_proj
+  - up_proj
+  - down_proj
+lora_bias: "none"
+inference_mode: false
+task_type: "CAUSAL_LM"
